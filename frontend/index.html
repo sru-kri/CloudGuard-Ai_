@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudGuard AI - Cloud Compliance Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <header class="main-header">
+            <h1>CloudGuard AI</h1>
+            <p>Autonomous Cloud Security Posture Management & Compliance Engine</p>
+        </header>
+
+        <main id="auth-screen" class="auth-box">
+            <div class="auth-tabs">
+                <button id="tab-login" class="tab-btn active">Log In</button>
+                <button id="tab-signup" class="tab-btn">Sign Up</button>
+            </div>
+
+            <form id="auth-form">
+                <div class="input-group">
+                    <label for="username">Username / Email</label>
+                    <input type="text" id="username" required placeholder="e.g., cloud_admin">
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                        <input type="password" id="password" required placeholder="••••••••" style="padding-right: 45px; margin-bottom: 0;">
+                        <button type="button" id="toggle-password" style="
+                            position: absolute;
+                            right: 15px;
+                            background: none;
+                            border: none;
+                            color: #64748b;
+                            cursor: pointer;
+                            font-size: 1rem;
+                            padding: 4px;
+                            user-select: none;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            transition: color 0.2s;
+                        " onmouseover="this.style.color='#38bdf8'" onmouseout="this.style.color='#64748b'">
+                            <i id="eye-icon" class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn" class="btn-primary">Log In</button>
+            </form>
+            <p id="auth-message" style="text-align: center; margin-top: 15px; font-size: 0.9rem; font-weight: 500; min-height: 20px;"></p>
+        </main>
+
+        <div id="console-screen" class="hidden">
+            <header style="position: relative; margin-bottom: 25px;">
+                <h2 style="color: #38bdf8; font-size: 1.75rem;">Security Command Center</h2>
+                <button id="logout-btn" class="btn-secondary">Secure Log Out</button>
+            </header>
+
+            <section class="control-panel">
+                <p style="color: #cbd5e1; text-align: center; font-size: 1rem;">
+                    Trigger an automated real-time compliance validation matrix across connected S3 assets, compute instances, and IAM configurations.
+                </p>
+                <button id="scan-btn" class="btn-primary">🚀 Run AI Cloud Scan</button>
+                <div id="status-text" class="status-idle">System ready to initiate environment audit loop.</div>
+            </section>
+
+            <section id="results-summary" class="hidden" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <div class="metric-card" style="border-left: 5px solid #ef4444;">
+                    <h3>Critical Alerts</h3>
+                    <p id="vuln-count-critical">0</p>
+                </div>
+                <div class="metric-card" style="border-left: 5px solid #f97316;">
+                    <h3>High Alerts</h3>
+                    <p id="vuln-count-high">0</p>
+                </div>
+                <div class="metric-card" style="border-left: 5px solid #eab308;">
+                    <h3>Medium Alerts</h3>
+                    <p id="vuln-count-medium">0</p>
+                </div>
+                <div class="metric-card" style="border-left: 5px solid #10b981; background: linear-gradient(135deg, #1e293b 0%, #064e3b 100%);">
+                    <h3>Environment Risk</h3>
+                    <p id="risk-score-pct" style="color: #10b981;">0%</p>
+                </div>
+            </section>
+
+            <section id="filter-bar-section" class="hidden" style="background-color: #1e293b; padding: 15px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 25px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 5px;">
+                    <label for="search-bar" style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase;">Search Vulnerabilities</label>
+                    <input type="text" id="search-bar" placeholder="Filter by Resource ID, rule name, or risk matrix..." style="background-color: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 6px; color: white; font-size: 0.9rem; width: 100%;">
+                </div>
+                <div style="width: 180px; display: flex; flex-direction: column; gap: 5px;">
+                    <label for="severity-filter" style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase;">Severity Scope</label>
+                    <select id="severity-filter" style="background-color: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 6px; color: white; font-size: 0.9rem; width: 100%; cursor: pointer;">
+                        <option value="ALL">Show All Severities</option>
+                        <option value="CRITICAL">CRITICAL Only</option>
+                        <option value="HIGH">HIGH Only</option>
+                        <option value="MEDIUM">MEDIUM Only</option>
+                    </select>
+                </div>
+            </section>
+
+            <section id="report-section" class="hidden">
+                <h3 style="margin-bottom: 15px; font-size: 1.3rem; border-left: 3px solid #38bdf8; padding-left: 10px;">AI Remediation Analysis Report</h3>
+                
+                <div class="table-container" style="width: 100%; overflow-x: auto; background-color: #1e293b; border: 1px solid #334155; border-radius: 8px; margin-bottom: 30px;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #334155;">
+                                <th style="padding: 1rem; color: #94a3b8;">Target Resource ID</th>
+                                <th style="padding: 1rem; color: #94a3b8;">Asset Class</th>
+                                <th style="padding: 1rem; color: #94a3b8;">Rule Match</th>
+                                <th style="padding: 1rem; color: #94a3b8;">Risk Level</th>
+                                <th style="padding: 1rem; color: #94a3b8; width: 45%;">AI Cause Isolation & Shell Mitigation Remediations</th>
+                            </tr>
+                        </thead>
+                        <tbody id="findings-table-body">
+                            </tbody>
+                    </table>
+                </div>
+
+                <div id="reports-container" class="hidden">
+                    </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
